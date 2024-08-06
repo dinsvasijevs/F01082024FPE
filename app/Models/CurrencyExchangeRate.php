@@ -9,17 +9,17 @@ class CurrencyExchangeRate extends Model
 {
     protected $fillable = ['base_currency', 'exchange_rate'];
 
-    public function getCacheKey()
+    public function getCacheKey($baseCurrency)
     {
-        return cache_key('currency_exchange_rates', $this->freshTimestamp());
+        return "currency_exchange_rates_{$baseCurrency}";
     }
 
     public function retrieveFromCache($baseCurrency)
     {
-        return Cache::rememberForever($this->getCacheKey(), function () use ($baseCurrency) {
+        return Cache::rememberForever($this->getCacheKey($baseCurrency), function () use ($baseCurrency) {
             // Fetch data from external source
             $data = $this->fetchDataFromExternalSource($baseCurrency);
-            // Store the data in the database and cache it for 30 minutes
+            // Store the data in the database
             $this->storeInDatabaseAndCache($data, $baseCurrency);
             return $data;
         });
@@ -32,7 +32,7 @@ class CurrencyExchangeRate extends Model
 
     private function storeInDatabaseAndCache($data, $baseCurrency)
     {
-        CurrencyExchangeRate::updateOrCreate(['base_currency' => $baseCurrency], ['exchange_rate' => $data['exchange_rate']]);
-        Cache::forever($this->getCacheKey(), $data);
+        self::updateOrCreate(['base_currency' => $baseCurrency], ['exchange_rate' => $data['exchange_rate']]);
+        Cache::forever($this->getCacheKey($baseCurrency), $data);
     }
 }

@@ -2,17 +2,17 @@
 
 namespace App\Models\Traits;
 
-use Illuminate\Support\Facades\Str;
-use Illuminate\Auth\MustVerifyEmail;
+use Illuminate\Support\Str;
 
 trait GeneratesIban
 {
     public function generateIban($iban)
     {
-        // Generate a random IBAN number
-        $randomNumber = rand(0, 99999);
+        // Generate a random 10-digit number
+        $randomNumber = random_int(1000000000, 9999999999);
 
         // Format the IBAN number using str_pad
-        return Str::pad($iban . $randomNumber, 22, '0', STR_PAD_LEFT);
+        return str_pad($iban . $randomNumber, 22, '0', STR_PAD_LEFT);
     }
 }
+
