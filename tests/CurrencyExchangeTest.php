@@ -1,25 +1,25 @@
 <?php
-
 namespace Tests;
 
 use App\Models\User;
-use Illuminate\Foundation\Testing\TestCase;
-use Illuminate\Support\Facades\Tests\CreatesApplication;
+use Illuminate\Foundation\Testing\TestResponse;
+use Tests\TestCase;
 
 class CurrencyExchangeTest extends TestCase
 {
-    use CreatesApplication;
-
-    public function test_convert_currency()
+    public function test_convert_currency_to_eur()
     {
         $user = new User();
-        $amount = 1000.00;
-        $fromCurrencyCode = 'USD';
-        $toCurrencyCode = 'EUR';
+        $response = $user->convertCurrency(100, 'USD', 'EUR');
 
-        $convertedAmount = $user->convertCurrency($amount, $fromCurrencyCode, $toCurrencyCode);
+        $this->assertEquals('60.00 EUR', $response);
+    }
 
-        // Assert converted amount is correct
-        $this->assertEquals(853.84, $convertedAmount);
+    public function test_convert_currency_from_usd()
+    {
+        $user = new User();
+        $response = $user->convertCurrency(60, 'EUR', 'USD');
+
+        $this->assertEquals('100 USD', $response);
     }
 }

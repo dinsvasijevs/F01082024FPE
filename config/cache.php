@@ -15,8 +15,8 @@ return [
     |
     */
 
-    'default' => env('CACHE_STORE', 'database'),
-
+    'default' => env('CACHE_DRIVER', 'redis'),
+    'store' => env('CACHE_STORE', 'database'),
     /*
     |--------------------------------------------------------------------------
     | Cache Stores
@@ -75,6 +75,9 @@ return [
             'driver' => 'redis',
             'connection' => env('REDIS_CACHE_CONNECTION', 'cache'),
             'lock_connection' => env('REDIS_CACHE_LOCK_CONNECTION', 'default'),
+            'host'     => '127.0.0.1',
+            'port'     => 6379,
+            'database' => 0,
         ],
 
         'dynamodb' => [
