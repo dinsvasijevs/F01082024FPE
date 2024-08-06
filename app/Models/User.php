@@ -10,12 +10,13 @@ use Illuminate\Database\Eloquent\Model;
 use Mockery\Generator\Generator;
 //use Illuminate\Auth\MustVerifyEmail;
 use App\Models\Traits\GeneratesIban;
+use App\Traits\HasCurrencyConversion;
 
 
 
 class User extends Authenticatable implements MustVerifyEmail
 {
-    use HasFactory, Notifiable, GeneratesIban;
+    use HasFactory, Notifiable, GeneratesIban,HasCurrencyConversion;
 
     /**
      * The attributes that are mass assignable.
