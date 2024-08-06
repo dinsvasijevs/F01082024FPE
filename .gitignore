@@ -18,3 +18,6 @@ yarn-error.log
 /.fleet
 /.idea
 /.vscode
+stripe/api_keys.txt
+stripe/api_keys.txt
+.env
