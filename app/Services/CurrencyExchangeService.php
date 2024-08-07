@@ -2,39 +2,42 @@
 
 namespace App\Services;
 
-use GuzzleHttp\Client;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Config;
 
 class CurrencyExchangeService
 {
-    private $apiUrl = 'https://currencybeacon.com/api/v1/';
-    private $client;
+    protected $apiUrl = 'https://api.currencybeacon.com/v1/';
+    protected $apiKey;
 
     public function __construct()
     {
-        $this->client = new Client();
+        $this->apiKey = config('services.currencybeacon.key');
     }
 
-    public function getCacheTTL(): int
+    public function getExchangeRate($from, $to)
     {
-        return 60 * 5; // 5 minutes
+        $cacheKey = "exchange_rate_{$from}_{$to}";
+
+        return Cache::remember($cacheKey, now()->addMinutes(60), function () use ($from, $to) {
+            $response = Http::get($this->apiUrl . 'latest', [
+                'api_key' => $this->apiKey,
+                'base' => $from,
+                'symbols' => $to,
+            ]);
+
+            if ($response->successful()) {
+                $data = $response->json();
+                return $data['rates'][$to] ?? null;
+            }
+
+            throw new \Exception('Failed to fetch exchange rate');
+        });
     }
 
-    public function getCachedExchangeRates(string $baseCurrency)
+    public function convertCurrency($amount, $from, $to)
     {
-        $cacheKey = "exchange_rates_{$baseCurrency}";
-        $cachedData = Cache::get($cacheKey);
-
-        if ($cachedData) {
-            return $cachedData;
-        }
-
-        $response = $this->client->get($this->apiUrl . 'convert?from=' . urlencode($baseCurrency) . '&to=EUR');
-        $data = json_decode($response->getBody()->getContents(), true);
-
-        Cache::put($cacheKey, $data, $this->getCacheTTL());
-
-        return $data;
+        $rate = $this->getExchangeRate($from, $to);
+        return $amount * $rate;
     }
 }

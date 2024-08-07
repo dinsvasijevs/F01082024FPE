@@ -56,4 +56,15 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return Str::pad($this->attributes['iban'] . random_int(0, 99999), 22, '0', STR_PAD_LEFT);
     }
+    public function payments()
+    {
+        return $this->hasMany(Payment::class);
+    }
+
+    public function generateIban()
+    {
+        // Implement your IBAN generation logic here
+        // This is a placeholder and should be replaced with actual IBAN generation code
+        return 'GB00MOCK0000000000000000';
+    }
 }

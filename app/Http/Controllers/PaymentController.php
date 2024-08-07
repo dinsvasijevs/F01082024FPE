@@ -3,61 +3,64 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\User;
-use Illuminate\Support\Facades\Str;
-use App\Models\Traits\GeneratesIban;
-use Stripe\Stripe;
-use Stripe\Customer;
-use Stripe\PaymentIntent;
+use App\Models\Payment;
+use App\Services\CurrencyExchangeService;
+use App\Http\Requests\PaymentStoreRequest;
+use Illuminate\Support\Facades\Log;
 
 class PaymentController extends Controller
 {
-    public function store(Request $request)
+    protected $currencyExchangeService;
+
+    public function __construct(CurrencyExchangeService $currencyExchangeService)
     {
-        // Create a payment intent
-        $stripe = new Stripe(config('services.stripe.secret'));
-        $paymentIntent = $stripe->paymentIntents()->create([
-            'amount' => 1000,
-            'currency' => 'eur',
-            'customer' => Customer::retrieve($request->input('customer_id')),
-            'return_url' => route('payment.success'),
-        ]);
-
-
-        // Charge the customer's card
-        $charge = $stripe->charges()->create([
-            'amount' => 1000,
-            'currency' => 'eur',
-            'source' => $request->input('card_token'),
-            'description' => 'Payment for order #12345',
-        ]);
-
-        // Return a success response
-        return response()->json(['message' => 'Payment processed successfully.']);
+        $this->middleware('auth');
+        $this->currencyExchangeService = $currencyExchangeService;
     }
 
-        public function index()
+    public function store(PaymentStoreRequest $request)
     {
-        // Display payment options for the current user
-        $user = auth()->user();
-        return view('payments.index', compact('user'));
+        try {
+            $amount = $request->validated('amount');
+            $currency = $request->validated('currency');
+            $baseCurrency = 'USD'; // Assume USD is your base currency
+
+            // Convert the amount to your base currency if necessary
+            if ($currency !== $baseCurrency) {
+                $amount = $this->currencyExchangeService->convertCurrency($amount, $currency, $baseCurrency);
+            }
+
+            // Create a payment record
+            $payment = Payment::create([
+                'user_id' => auth()->id(),
+                'amount' => $amount,
+                'currency' => $baseCurrency,
+                'status' => 'completed',
+            ]);
+
+            return response()->json(['message' => 'Payment processed successfully', 'payment' => $payment]);
+        } catch (\Exception $e) {
+            Log::error('Payment creation failed: ' . $e->getMessage());
+            return response()->json(['error' => 'Payment processing failed'], 500);
+        }
     }
 
-    public function generateInvoice(Request $request)
+    public function index()
     {
-        // Generate an invoice for the current user
-        $user = auth()->user();
-
-        // Use the IBAN generation logic from the GeneratesIban trait
-        $ibanGenerator = app(GeneratesIban::class);
-        $iban = $ibanGenerator->generateIban($user->getIbanAttribute());
-
-        return view('payments.invoice', compact('user', 'iban'));
+        $payments = auth()->user()->payments()->latest()->get();
+        return view('payments.index', compact('payments'));
     }
 
-    public function processPayment(Request $request)
+    public function getExchangeRate(Request $request)
     {
-        // Process a payment for the current user
-        // TO DO: implement payment processing logic here
+        try {
+            $from = $request->input('from', 'USD');
+            $to = $request->input('to', 'EUR');
+            $rate = $this->currencyExchangeService->getExchangeRate($from, $to);
+            return response()->json(['rate' => $rate]);
+        } catch (\Exception $e) {
+            Log::error('Exchange rate fetch failed: ' . $e->getMessage());
+            return response()->json(['error' => 'Failed to fetch exchange rate'], 500);
+        }
     }
 }

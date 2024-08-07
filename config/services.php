@@ -14,6 +14,10 @@ return [
     |
     */
 
+    'currencybeacon' => [
+        'key' => env('CURRENCYBEACON_API_KEY'),
+    ],
+
     'postmark' => [
         'token' => env('POSTMARK_TOKEN'),
     ],
@@ -27,6 +31,11 @@ return [
     'resend' => [
         'key' => env('RESEND_KEY'),
     ],
+    'stripe' => [
+        'secret' => env('STRIPE_SECRET'),
+        'key' => env('STRIPE_KEY'),
+    ],
+
 
     'slack' => [
         'notifications' => [

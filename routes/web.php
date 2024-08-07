@@ -1,7 +1,19 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\PaymentController;
 use Illuminate\Support\Facades\Route;
+
+/*
+|--------------------------------------------------------------------------
+| Web Routes
+|--------------------------------------------------------------------------
+|
+| Here is where you can register web routes for your application. These
+| routes are loaded by the RouteServiceProvider and all of them will
+| be assigned to the "web" middleware group. Make something great!
+|
+*/
 
 Route::get('/', function () {
     return view('welcome');
@@ -17,8 +29,12 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-Route::get('/payment/index', 'PaymentController@index');
-Route::post('/payment/invoice', 'PaymentController@generateInvoice')->name('generate.invoice');
-Route::post('/payment/process', 'PaymentController@processPayment')->name('process.payment');
+Route::middleware(['auth', 'verified'])->group(function () {
+    Route::get('/payments', [PaymentController::class, 'index'])->name('payments.index');
+    Route::post('/payments', [PaymentController::class, 'store'])->name('payments.store');
+    Route::get('/exchange-rates', function () {
+        return view('exchange_rates');
+    })->name('exchange-rates');
+});
 
 require __DIR__.'/auth.php';

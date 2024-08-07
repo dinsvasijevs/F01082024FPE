@@ -9,6 +9,8 @@
         "guzzlehttp/guzzle": "^7.9",
         "laravel/framework": "^11.9",
         "laravel/tinker": "^2.9",
+        "predis/predis": "^2.2",
+        "spatie/laravel-permission": "^6.9",
         "stripe/stripe-php": "^15.5"
     },
     "require-dev": {
