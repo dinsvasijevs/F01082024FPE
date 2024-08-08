@@ -26,4 +26,9 @@ class Transaction extends Model
     {
         return $this->belongsTo(Account::class, 'to_account_id');
     }
+
+    public static function create(array $attributes = [])
+    {
+        return static::query()->create($attributes);
+    }
 }

@@ -1,4 +1,5 @@
 <?php
+
 namespace Tests\Feature;
 
 use Tests\TestCase;
@@ -13,7 +14,7 @@ class TransactionControllerTest extends TestCase
 
     public function test_user_can_transfer_money()
     {
-        $this->seed();
+        $this->withoutExceptionHandling();
 
         $user1 = User::factory()->create();
         $user2 = User::factory()->create();
@@ -32,7 +33,7 @@ class TransactionControllerTest extends TestCase
 
         Currency::create(['code' => 'USD', 'rate' => 1]);
 
-        $response = $this->actingAs($user1)->postJson('/api/transfer', [
+        $response = $this->actingAs($user1)->postJson('/transfer', [
             'to_account_id' => $account2->id,
             'amount' => 500,
             'currency' => 'USD',

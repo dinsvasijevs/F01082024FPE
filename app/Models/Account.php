@@ -27,4 +27,9 @@ class Account extends Model
     {
         return $this->hasMany(Transaction::class);
     }
+
+    public static function findOrFail($id)
+    {
+        return static::query()->findOrFail($id);
+    }
 }

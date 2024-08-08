@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Http\Requests\TransferRequest;
 use App\Services\TransactionService;
+use Illuminate\Http\JsonResponse;
 
 class TransactionController extends Controller
 {
@@ -15,18 +15,15 @@ class TransactionController extends Controller
         $this->transactionService = $transactionService;
     }
 
-    public function transfer(TransferRequest $request)
+    public function transfer(TransferRequest $request): JsonResponse
     {
-        try {
-            $transaction = $this->transactionService->transfer(
-                $request->user()->account->id,
-                $request->to_account_id,
-                $request->amount,
-                $request->currency
-            );
-            return response()->json(['message' => 'Transfer successful', 'transaction' => $transaction]);
-        } catch (\Exception $e) {
-            return response()->json(['message' => $e->getMessage()], 400);
-        }
+        $result = $this->transactionService->transfer(
+            $request->user()->account->id,
+            $request->to_account_id,
+            $request->amount,
+            $request->currency
+        );
+
+        return response()->json(['message' => 'Transfer successful', 'transaction' => $result]);
     }
 }
