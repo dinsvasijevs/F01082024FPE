@@ -6,6 +6,8 @@ use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
 use Illuminate\Foundation\Application;
 use Illuminate\Http\Request;
+use App\Models\Account;
+use App\Models\Transaction;
 
 class DashboardController extends Controller
 {
@@ -13,8 +15,12 @@ class DashboardController extends Controller
     {
         $user = $request->user();
         $account = $user->account;
-        $transactions = $account->transactions()->latest()->take(10)->get();
+        $transactions = Transaction::where('from_account_id', $account->id)
+            ->orWhere('to_account_id', $account->id)
+            ->latest()
+            ->take(10)
+            ->get();
 
-        return view('dashboard', compact('user', 'account', 'transactions'));
+        return view('dashboard', compact('account', 'transactions'));
     }
 }
