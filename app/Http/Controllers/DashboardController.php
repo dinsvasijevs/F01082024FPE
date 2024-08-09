@@ -8,6 +8,7 @@ use Illuminate\Foundation\Application;
 use Illuminate\Http\Request;
 use App\Models\Account;
 use App\Models\Transaction;
+use App\Models\Currency;
 
 class DashboardController extends Controller
 {
@@ -21,6 +22,8 @@ class DashboardController extends Controller
             ->take(10)
             ->get();
 
-        return view('dashboard', compact('user', 'account', 'transactions'));
+        $currencies = Currency::all();  // Add this line
+
+        return view('dashboard', compact('user', 'account', 'transactions', 'currencies'));
     }
 }

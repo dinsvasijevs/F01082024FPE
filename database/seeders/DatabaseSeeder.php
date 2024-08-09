@@ -2,9 +2,10 @@
 
 namespace Database\Seeders;
 
-use App\Models\User;
-// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use App\Models\User;
+use App\Models\Account;
+use Illuminate\Support\Facades\Hash;
 
 class DatabaseSeeder extends Seeder
 {
@@ -13,18 +14,11 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
         $this->call([
-            UsersTableSeeder::class,
-            AccountsTableSeeder::class,
-            CurrenciesTableSeeder::class,
+            CurrenciesTableSeeder::class,  // First, seed the currencies
+            UserAndAccountSeeder::class,   // Then, create the predefined users with accounts
+            UsersTableSeeder::class,       // Create additional random users
+            AccountsTableSeeder::class,    // Create accounts for the random users
         ]);
-
-       // $this->call(UsersTableSeeder::class);
-
-       // User::factory()->create([
-          //  'name' => 'Test User',
-          //  'email' => 'test@example.com',
-        //]);
     }
 }
