@@ -3,7 +3,8 @@
 namespace App\Services;
 
 use Illuminate\Support\Facades\Http;
-use App\Models\Currency;
+//use App\Models\Currency;
+use Illuminate\Support\Facades\Cache;
 
 class CurrencyService
 {
@@ -14,30 +15,24 @@ class CurrencyService
         $this->apiKey = config('services.currency_beacon.api_key');
     }
 
-    public function updateExchangeRates()
+    public function getExchangeRates()
     {
-        $response = Http::get("https://api.currencybeacon.com/v1/latest?api_key={$this->apiKey}&base=USD");
+        return Cache::remember('exchange_rates', 3600, function () {
+            $response = Http::get("https://api.currencybeacon.com/v1/latest", [
+                'api_key' => $this->apiKey,
+                'base' => 'USD'
+            ]);
 
-        if ($response->successful()) {
-            $rates = $response->json()['rates'];
-            foreach ($rates as $code => $rate) {
-                Currency::updateOrCreate(
-                    ['code' => $code],
-                    ['rate' => $rate]
-                );
-            }
-        }
+            return $response->json()['rates'];
+        });
     }
 
-    public function convert($amount, $fromCurrency, $toCurrency)
+    public function convert($amount, $from, $to): float|int
     {
-        $from = Currency::where('code', $fromCurrency)->first();
-        $to = Currency::where('code', $toCurrency)->first();
+        $rates = $this->getExchangeRates();
+        $fromRate = $rates[$from];
+        $toRate = $rates[$to];
 
-        if (!$from || !$to) {
-            throw new \Exception('Currency not found');
-        }
-
-        return $amount * ($to->rate / $from->rate);
+        return ($amount / $fromRate) * $toRate;
     }
 }

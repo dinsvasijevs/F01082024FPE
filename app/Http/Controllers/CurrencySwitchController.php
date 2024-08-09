@@ -8,23 +8,35 @@ use App\Services\CurrencyService;
 use App\Models\Currency;
 
 
-
 class CurrencySwitchController extends Controller
 {
+    protected CurrencyService $currencyService;
+
+    public function __construct(CurrencyService $currencyService)
+    {
+        $this->currencyService = $currencyService;
+    }
+
     public function switch(Request $request): RedirectResponse
     {
         $request->validate([
-            'currency' => 'required|exists:currencies,code',
+            'currency' => 'required|string|size:3',
         ]);
 
         $user = $request->user();
         $account = $user->account;
-        $newCurrency = Currency::where('code', $request->currency)->first();
+        $newCurrency = $request->currency;
 
-        // Convert balance to new currency
-        $account->balance = $account->balance * ($newCurrency->rate / Currency::where('code', $account->currency)->first()->rate);
-        $account->currency = $newCurrency->code;
-        $account->save();
+        $convertedBalance = $this->currencyService->convert(
+            $account->balance,
+            $account->currency,
+            $newCurrency
+        );
+
+        $account->update([
+            'balance' => $convertedBalance,
+            'currency' => $newCurrency,
+        ]);
 
         return redirect()->back()->with('status', 'Currency switched successfully.');
     }

@@ -6,17 +6,25 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class TransferRequest extends FormRequest
 {
-    public function authorize()
+    public function authorize(): true
     {
         return true;
     }
 
-    public function rules()
+    public function rules(): array
     {
         return [
             'to_account_id' => 'required|exists:accounts,id',
             'amount' => 'required|numeric|min:0.01',
-            'currency' => 'required|exists:currencies,code',
+            'currency' => 'required|string|size:3',
+        ];
+    }
+
+    public function messages(): array
+    {
+        return [
+            'to_account_id.exists' => 'The recipient account does not exist.',
+            'amount.min' => 'The transfer amount must be at least 0.01.',
         ];
     }
 }

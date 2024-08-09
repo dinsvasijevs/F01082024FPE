@@ -21,6 +21,6 @@ class DashboardController extends Controller
             ->take(10)
             ->get();
 
-        return view('dashboard', compact('account', 'transactions'));
+        return view('dashboard', compact('user', 'account', 'transactions'));
     }
 }

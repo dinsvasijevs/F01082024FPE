@@ -11,7 +11,7 @@
                 <div class="p-6 bg-white border-b border-gray-200">
                     <h3 class="text-lg font-semibold mb-4">Account Information</h3>
                     <p>IBAN: {{ $account->iban }}</p>
-                    <p>Balance: {{ $account->balance }} {{ $account->currency }}</p>
+                    <p>Balance: {{ number_format($account->balance, 2) }} {{ $account->currency }}</p>
                 </div>
             </div>
 
@@ -21,7 +21,7 @@
                     @foreach ($transactions as $transaction)
                         <div class="mb-2">
                             <p>{{ $transaction->created_at->format('Y-m-d H:i') }} -
-                                {{ $transaction->amount }} {{ $transaction->currency }}
+                                {{ number_format($transaction->amount, 2) }} {{ $transaction->currency }}
                                 ({{ $transaction->from_account_id == $account->id ? 'Sent' : 'Received' }})
                             </p>
                         </div>
@@ -75,6 +75,18 @@
                     </form>
                 </div>
             </div>
+
+            @if (session('success'))
+                <div class="mt-4 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative" role="alert">
+                    {{ session('success') }}
+                </div>
+            @endif
+
+            @if (session('error'))
+                <div class="mt-4 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
+                    {{ session('error') }}
+                </div>
+            @endif
         </div>
     </div>
 </x-app-layout>

@@ -11,7 +11,16 @@ return new class extends Migration
      */
     public function up(): void
     {
-        //
+        // This table is not needed if IBAN is already in the accounts table
+        // If you decide to keep it, uncomment the following:
+        /*
+        Schema::create('ibans', function (Blueprint $table) {
+            $table->id();
+            $table->string('iban')->unique();
+            $table->foreignId('account_id')->constrained()->onDelete('cascade');
+            $table->timestamps();
+        });
+        */
     }
 
     /**
@@ -19,6 +28,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        //
+        Schema::dropIfExists('ibans');
+
     }
 };

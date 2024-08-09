@@ -14,6 +14,14 @@ return [
     |
     */
 
+    'currency_beacon' => [
+        'api_key' => env('CURRENCY_BEACON_API_KEY'),
+    ],
+
+    'coinmarketcap' => [
+        'api_key' => env('COINMARKETCAP_API_KEY'),
+    ],
+
     'postmark' => [
         'token' => env('POSTMARK_TOKEN'),
     ],
