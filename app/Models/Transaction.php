@@ -17,6 +17,7 @@ class Transaction extends Model
         'currency',
     ];
 
+
     public function fromAccount(): BelongsTo
     {
         return $this->belongsTo(Account::class, 'from_account_id');
