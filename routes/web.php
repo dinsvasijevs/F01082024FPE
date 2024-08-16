@@ -9,7 +9,6 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ChangePasswordController;
 use App\Http\Controllers\DashboardController;
 
-
 Route::get('/', function () {
     return view('welcome');
 });
@@ -25,5 +24,10 @@ Route::middleware('auth')->group(function () {
     Route::post('/switch-currency', [CurrencySwitchController::class, 'switch'])->name('switch-currency');
     Route::get('/change-password', [ChangePasswordController::class, 'showChangePasswordForm'])->name('password.change');
     Route::post('/change-password', [ChangePasswordController::class, 'changePassword'])->name('password.update');
+
+    // New routes for cryptocurrency buying and selling
+    Route::post('/crypto/buy', [CryptocurrencyController::class, 'buy'])->name('crypto.buy');
+    Route::post('/crypto/sell', [CryptocurrencyController::class, 'sell'])->name('crypto.sell');
 });
+
 require __DIR__.'/auth.php';

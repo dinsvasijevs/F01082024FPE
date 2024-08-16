@@ -103,10 +103,6 @@
         <nav>
             <div class="logo">Silver Bank</div>
             <div class="nav-links">
-                <a href="#home">Home</a>
-                <a href="#accounts">Accounts</a>
-                <a href="#investments">Investments</a>
-                <a href="#support">Support</a>
                 @if (Route::has('login'))
                     @auth
                         <a href="{{ url('/dashboard') }}">Dashboard</a>
@@ -127,7 +123,9 @@
         <div class="container">
             <h1>Welcome to Silver Bank</h1>
             <p>Secure, reliable, and innovative banking solutions for your financial needs.</p>
-            <a href="#" class="cta-button">Open an Account</a>
+            @if (Route::has('register'))
+                <a href="{{ route('register') }}" class="cta-button">Open an Account</a>
+            @endif
         </div>
     </section>
 
