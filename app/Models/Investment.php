@@ -10,7 +10,7 @@ class Investment extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['user_id', 'symbol', 'amount'];
+    protected $fillable = ['symbol', 'amount', 'average_buy_price'];
 
     public function user(): BelongsTo
     {

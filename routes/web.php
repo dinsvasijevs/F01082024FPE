@@ -20,15 +20,19 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
     Route::post('/transfer', [TransactionsController::class, 'transfer'])->name('transfer');
-    Route::get('/investments', [InvestmentController::class, 'index'])->name('investments');
     Route::get('/cryptocurrencies', [CryptocurrencyController::class, 'index'])->name('cryptocurrencies');
     Route::post('/switch-currency', [CurrencySwitchController::class, 'switch'])->name('switch-currency');
     Route::get('/change-password', [ChangePasswordController::class, 'showChangePasswordForm'])->name('password.change');
     Route::post('/change-password', [ChangePasswordController::class, 'changePassword'])->name('password.update');
     Route::get('/transactions', [TransactionController::class, 'index'])->name('transactions.index');
-    // New routes for cryptocurrency buying and selling
-    Route::post('/crypto/buy', [CryptocurrencyController::class, 'buy'])->name('crypto.buy');
-    Route::post('/crypto/sell', [CryptocurrencyController::class, 'sell'])->name('crypto.sell');
+
+    // Investment routes
+    Route::get('/investments', [InvestmentController::class, 'index'])->name('investments.index');
+    Route::post('/investments/trade', [InvestmentController::class, 'trade'])->name('investments.trade');
+
+    // Cryptocurrency routes
+    Route::post('/cryptocurrencies/buy', [CryptocurrencyController::class, 'buy'])->name('cryptocurrencies.buy');
+    Route::post('/cryptocurrencies/sell', [CryptocurrencyController::class, 'sell'])->name('cryptocurrencies.sell');
 });
 
 require __DIR__.'/auth.php';

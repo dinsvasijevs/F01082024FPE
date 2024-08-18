@@ -89,14 +89,14 @@ class CryptocurrencyController extends Controller
                 $request->amount
             );
 
-            return redirect()->route('cryptocurrencies.index')
+            return redirect()->route('cryptocurrencies')
                 ->with('success', "Successfully bought {$request->amount} {$request->symbol}. Check your investments page for details.");
         } catch (\Exception $e) {
             return redirect()->back()->with('error', $e->getMessage());
         }
     }
 
-    public function sell(Request $request)
+    public function sell(Request $request): RedirectResponse
     {
         $request->validate([
             'symbol' => 'required|string',

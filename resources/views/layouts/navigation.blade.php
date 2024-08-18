@@ -15,7 +15,7 @@
                     <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                         {{ __('Dashboard') }}
                     </x-nav-link>
-                    <x-nav-link :href="route('investments')" :active="request()->routeIs('investments')">
+                    <x-nav-link :href="route('investments.index')" :active="request()->routeIs('investments.index')">
                         {{ __('Investments') }}
                     </x-nav-link>
                     <x-nav-link :href="route('cryptocurrencies')" :active="request()->routeIs('cryptocurrencies')">
@@ -76,7 +76,7 @@
             <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                 {{ __('Dashboard') }}
             </x-responsive-nav-link>
-            <x-responsive-nav-link :href="route('investments')" :active="request()->routeIs('investments')">
+            <x-responsive-nav-link :href="route('investments.index')" :active="request()->routeIs('investments.index')">
                 {{ __('Investments') }}
             </x-responsive-nav-link>
             <x-responsive-nav-link :href="route('cryptocurrencies')" :active="request()->routeIs('cryptocurrencies')">

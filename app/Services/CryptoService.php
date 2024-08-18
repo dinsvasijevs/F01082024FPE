@@ -61,16 +61,19 @@ class CryptoService
         });
     }
 
-    private function getCryptoPrice($symbol)
+    public function getCurrentPrice($symbol)
     {
-        $response = Http::withHeaders([
-            'X-CMC_PRO_API_KEY' => config('services.coinmarketcap.api_key')
-        ])->get('https://pro-api.coinmarketcap.com/v1/cryptocurrency/quotes/latest', [
-            'symbol' => $symbol,
-            'convert' => 'USD'
-        ]);
+        return Cache::remember("price_{$symbol}", 60, function () use ($symbol) {
+            $response = Http::withHeaders([
+                'X-CMC_PRO_API_KEY' => config('services.coinmarketcap.api_key')
+            ])->get('https://pro-api.coinmarketcap.com/v1/cryptocurrency/quotes/latest', [
+                'symbol' => $symbol,
+                'convert' => 'USD'
+            ]);
 
-        $data = $response->json();
-        return $data['data'][$symbol]['quote']['USD']['price'];
+            $data = $response->json();
+            return $data['data'][$symbol]['quote']['USD']['price'];
+        });
     }
+
 }
