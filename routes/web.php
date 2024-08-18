@@ -31,6 +31,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/investments/trade', [InvestmentController::class, 'trade'])->name('investments.trade');
 
     // Cryptocurrency routes
+    Route::post('/cryptocurrencies/sell', [CryptocurrencyController::class, 'sell'])->name('cryptocurrencies.sell');
     Route::post('/cryptocurrencies/buy', [CryptocurrencyController::class, 'buy'])->name('cryptocurrencies.buy');
     Route::post('/cryptocurrencies/sell', [CryptocurrencyController::class, 'sell'])->name('cryptocurrencies.sell');
 });

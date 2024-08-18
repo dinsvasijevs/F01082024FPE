@@ -5,7 +5,6 @@ namespace App\Services;
 use App\Models\User;
 use App\Models\Investment;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Http;
 
 class CryptoService
 {
@@ -17,15 +16,18 @@ class CryptoService
             $totalCost = $amount * $cryptoPrice;
 
             if ($user->balance < $totalCost) {
-                throw new \Exception('Insufficient funds');
+                throw new \Exception('Insufficient balance');
             }
 
             $user->balance -= $totalCost;
             $user->save();
 
-            $investment = Investment::updateOrCreate(
-                ['user_id' => $userId, 'symbol' => $symbol],
-                ['amount' => DB::raw("amount + $amount")]
+            $investment = $user->investments()->updateOrCreate(
+                ['symbol' => $symbol],
+                [
+                    'amount' => DB::raw("amount + {$amount}"),
+                    'average_buy_price' => DB::raw("(average_buy_price * amount + {$totalCost}) / (amount + {$amount})")
+                ]
             );
 
             return $investment;
@@ -61,19 +63,24 @@ class CryptoService
         });
     }
 
-    public function getCurrentPrice($symbol)
+    public function getCryptoPrice($symbol)
     {
-        return Cache::remember("price_{$symbol}", 60, function () use ($symbol) {
-            $response = Http::withHeaders([
-                'X-CMC_PRO_API_KEY' => config('services.coinmarketcap.api_key')
-            ])->get('https://pro-api.coinmarketcap.com/v1/cryptocurrency/quotes/latest', [
-                'symbol' => $symbol,
-                'convert' => 'USD'
-            ]);
+        $cacheData = DB::table('cache')->where('key', 'crypto_prices')->first();
 
-            $data = $response->json();
-            return $data['data'][$symbol]['quote']['USD']['price'];
-        });
+        if ($cacheData && $this->isCacheValid($cacheData)) {
+            $cryptocurrencies = json_decode($cacheData->value, true);
+            foreach ($cryptocurrencies as $crypto) {
+                if ($crypto['symbol'] === $symbol) {
+                    return $crypto['quote']['USD']['price'];
+                }
+            }
+        }
+
+        throw new \Exception("Price for {$symbol} not found in cache.");
     }
 
+    private function isCacheValid($cacheData): bool
+    {
+        return $cacheData->expiration > time();
+    }
 }

@@ -10,7 +10,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use App\Services\CryptoService;
 use Illuminate\Support\Facades\DB;
-use App\Models\Investment;
 use Illuminate\Support\Facades\Auth;
 
 class CryptocurrencyController extends Controller
@@ -26,10 +25,51 @@ class CryptocurrencyController extends Controller
     public function index(): View|Factory|Application
     {
         $cryptocurrencies = $this->getCachedCryptocurrencies();
+        return view('cryptocurrencies.index', compact('cryptocurrencies'));
+    }
 
-        $userInvestments = Investment::where('user_id', Auth::id())->get()->keyBy('symbol');
+    public function buy(Request $request): RedirectResponse
+    {
+        $request->validate([
+            'symbol' => 'required|string',
+            'amount' => 'required|numeric|min:0.00000001',
+        ]);
 
-        return view('cryptocurrencies.index', compact('cryptocurrencies', 'userInvestments'));
+        try {
+            $this->cryptoService->buyCrypto(
+                Auth::id(),
+                $request->symbol,
+                $request->amount
+            );
+
+            return redirect()->route('cryptocurrencies')
+                ->with('success', "Successfully bought {$request->amount} {$request->symbol}.");
+        } catch (\Exception $e) {
+            return redirect()->route('cryptocurrencies')
+                ->with('error', $e->getMessage());
+        }
+    }
+
+    public function sell(Request $request): RedirectResponse
+    {
+        $request->validate([
+            'symbol' => 'required|string',
+            'amount' => 'required|numeric|min:0.00000001',
+        ]);
+
+        try {
+            $this->cryptoService->sellCrypto(
+                Auth::id(),
+                $request->symbol,
+                $request->amount
+            );
+
+            return redirect()->route('cryptocurrencies')
+                ->with('success', "Successfully sold {$request->amount} {$request->symbol}");
+        } catch (\Exception $e) {
+            return redirect()->route('cryptocurrencies')
+                ->with('error', $e->getMessage());
+        }
     }
 
     private function getCachedCryptocurrencies(): array
@@ -73,46 +113,5 @@ class CryptocurrencyController extends Controller
         ]);
 
         return $response->json()['data'];
-    }
-
-    public function buy(Request $request): RedirectResponse
-    {
-        $request->validate([
-            'symbol' => 'required|string',
-            'amount' => 'required|numeric|min:0.00000001',
-        ]);
-
-        try {
-            $result = $this->cryptoService->buyCrypto(
-                auth()->user()->id,
-                $request->symbol,
-                $request->amount
-            );
-
-            return redirect()->route('cryptocurrencies')
-                ->with('success', "Successfully bought {$request->amount} {$request->symbol}. Check your investments page for details.");
-        } catch (\Exception $e) {
-            return redirect()->back()->with('error', $e->getMessage());
-        }
-    }
-
-    public function sell(Request $request): RedirectResponse
-    {
-        $request->validate([
-            'symbol' => 'required|string',
-            'amount' => 'required|numeric|min:0.00000001',
-        ]);
-
-        try {
-            $result = $this->cryptoService->sellCrypto(
-                Auth::id(),
-                $request->symbol,
-                $request->amount
-            );
-
-            return redirect()->back()->with('success', "Successfully sold {$request->amount} {$request->symbol}");
-        } catch (\Exception $e) {
-            return redirect()->back()->with('error', $e->getMessage());
-        }
     }
 }
