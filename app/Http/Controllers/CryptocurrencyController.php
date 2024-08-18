@@ -36,7 +36,7 @@ class CryptocurrencyController extends Controller
         ]);
 
         try {
-            $this->cryptoService->buyCrypto(
+            $result = $this->cryptoService->buyCrypto(
                 Auth::id(),
                 $request->symbol,
                 $request->amount
@@ -45,6 +45,7 @@ class CryptocurrencyController extends Controller
             return redirect()->route('cryptocurrencies')
                 ->with('success', "Successfully bought {$request->amount} {$request->symbol}.");
         } catch (\Exception $e) {
+            \Log::error('Error buying cryptocurrency: ' . $e->getMessage());
             return redirect()->route('cryptocurrencies')
                 ->with('error', $e->getMessage());
         }

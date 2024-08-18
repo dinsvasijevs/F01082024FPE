@@ -12,23 +12,36 @@ class CryptoService
     {
         return DB::transaction(function () use ($userId, $symbol, $amount) {
             $user = User::findOrFail($userId);
+            $account = $user->account;
+
+            if (!$account) {
+                throw new \Exception("User doesn't have an associated account.");
+            }
+
             $cryptoPrice = $this->getCryptoPrice($symbol);
             $totalCost = $amount * $cryptoPrice;
 
-            if ($user->balance < $totalCost) {
-                throw new \Exception('Insufficient balance');
+            \Log::info("User account balance: " . $account->balance);
+            \Log::info("Total cost: " . $totalCost);
+
+            if ($account->balance < $totalCost) {
+                throw new \Exception("Insufficient balance. You need $" . $totalCost . ", but you only have $" . $account->balance);
             }
 
-            $user->balance -= $totalCost;
-            $user->save();
+            $account->balance -= $totalCost;
+            $account->save();
 
-            $investment = $user->investments()->updateOrCreate(
-                ['symbol' => $symbol],
-                [
-                    'amount' => DB::raw("amount + {$amount}"),
-                    'average_buy_price' => DB::raw("(average_buy_price * amount + {$totalCost}) / (amount + {$amount})")
-                ]
-            );
+            $investment = Investment::firstOrNew([
+                'user_id' => $userId,
+                'symbol' => $symbol
+            ]);
+
+            $newAmount = ($investment->amount ?? 0) + $amount;
+            $newTotalCost = (($investment->amount ?? 0) * ($investment->average_buy_price ?? 0)) + $totalCost;
+            $investment->amount = $newAmount;
+            $investment->average_buy_price = $newTotalCost / $newAmount;
+
+            $investment->save();
 
             return $investment;
         });
@@ -38,6 +51,12 @@ class CryptoService
     {
         return DB::transaction(function () use ($userId, $symbol, $amount) {
             $user = User::findOrFail($userId);
+            $account = $user->account;
+
+            if (!$account) {
+                throw new \Exception("User doesn't have an associated account.");
+            }
+
             $investment = Investment::where('user_id', $userId)
                 ->where('symbol', $symbol)
                 ->firstOrFail();
@@ -49,8 +68,8 @@ class CryptoService
             $cryptoPrice = $this->getCryptoPrice($symbol);
             $totalValue = $amount * $cryptoPrice;
 
-            $user->balance += $totalValue;
-            $user->save();
+            $account->balance += $totalValue;
+            $account->save();
 
             $investment->amount -= $amount;
             $investment->save();
