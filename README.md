@@ -1,66 +1,90 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+### Codelex Final Project
 
-## About Laravel
+This is a final project for Codelex Bootcamp by **Dins Vasijevs**.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+The application replicates a digital banking platform with built-in cryptocurrency trading capabilities. It provides secure registration and authentication for both individual and corporate users. Users can create and manage cash accounts, each denominated in their chosen currency. The system also supports connections between users, facilitating smooth money transfers. When a transfer requires currency conversion, the exchange rates are automatically retrieved from the CurrencyBaconApi.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Requirements
+- **PHP**: 8.2+
+- **Composer**: 2.7.8+
+- **Node.js**: 22.4.1+
+- **ext-http**: Required
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## Setup Instructions
 
-## Learning Laravel
+1. **Clone the Repository:**
+   ```bash
+   git clone https://github.com/your-repo/dinsvasijevs/F01082024FPE.git
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+Set Up Environment File:
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+Rename .env.example to .env and update it with your configurations.
+Set PostgreSQL for Docker or SQLite for local development.
+Install PHP Dependencies:
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+bash
+Kopēt kodu
+composer install
+Generate Application Key:
 
-## Laravel Sponsors
+bash
+Kopēt kodu
+php artisan key:generate
+Run Migrations:
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+bash
+Kopēt kodu
+php artisan migrate
+Install Frontend Dependencies:
 
-### Premium Partners
+bash
+Kopēt kodu
+npm install
+Build Frontend Assets:
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+bash
+Kopēt kodu
+npm run build
+Serve the Application:
 
-## Contributing
+bash
+Kopēt kodu
+php artisan serve
+Open your browser and navigate to http://localhost:8000.
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+Commands
+Essential Commands:
 
-## Code of Conduct
+php artisan app:fetch-fiat: Retrieve exchange rates from the CurrencyBaconApi.
+php artisan app:fetch-crypto: Fetch cryptocurrency data from the CoinMarketCapApi.
+Optional Commands:
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+php artisan db:seed: Populate the database with demo data, including two test users:
+Email: amelia@example.com
+Email: oscar@example.com
+Password: password
+php artisan app:fetch-crypto-info: Retrieve cryptocurrency logos from CoinMarketCap.
+Environment Variables
+CoinMarketCap API Key: Ensure that your CoinMarketCap API key is set in the COINMC environment variable.
+Automated testing is implemented using Pest. To run the test suite:
 
-## Security Vulnerabilities
+bash
+Kopēt kodu
+./vendor/bin/pest
+Contact
+If you have any questions or feedback, feel free to reach out:
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+Name: Dins Vasijevs
+Email: dianex13@gmail.com
+markdown
+Kopēt kodu
 
-## License
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+
+
+
+
+
+
+
