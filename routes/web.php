@@ -8,7 +8,7 @@ use App\Http\Controllers\CurrencySwitchController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ChangePasswordController;
 use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\TransactionController;
+
 
 Route::get('/', function () {
     return view('welcome');
@@ -24,7 +24,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/switch-currency', [CurrencySwitchController::class, 'switch'])->name('switch-currency');
     Route::get('/change-password', [ChangePasswordController::class, 'showChangePasswordForm'])->name('password.change');
     Route::post('/change-password', [ChangePasswordController::class, 'changePassword'])->name('password.update');
-    Route::get('/transactions', [TransactionController::class, 'index'])->name('transactions.index');
+    Route::get('/transactions', [TransactionsController::class, 'index'])->name('transactions.index');
 
     // Investment routes
     Route::get('/investments', [InvestmentController::class, 'index'])->name('investments.index');

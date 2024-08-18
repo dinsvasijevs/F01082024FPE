@@ -14,11 +14,14 @@ class TransactionService
             $fromAccount = Account::findOrFail($fromAccountId);
             $toAccount = Account::findOrFail($toAccountId);
 
-            if ($fromAccount->balance < $amount) {
+            // Add currency conversion logic here if needed
+            $convertedAmount = $this->convertCurrency($amount, $currency, $fromAccount->currency);
+
+            if ($fromAccount->balance < $convertedAmount) {
                 throw new \Exception('Insufficient funds');
             }
 
-            $fromAccount->balance -= $amount;
+            $fromAccount->balance -= $convertedAmount;
             $toAccount->balance += $amount;
 
             $fromAccount->save();
@@ -31,5 +34,11 @@ class TransactionService
                 'currency' => $currency,
             ]);
         });
+    }
+    private function convertCurrency($amount, $fromCurrency, $toCurrency)
+    {
+        // Implement currency conversion logic here
+        // For now, we'll just return the original amount
+        return $amount;
     }
 }

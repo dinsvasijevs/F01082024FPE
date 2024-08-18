@@ -14,9 +14,9 @@ class TransferRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'to_account_iban' => 'required|exists:accounts,iban',
+            'to_account_iban' => 'required|string|exists:accounts,iban',
             'amount' => 'required|numeric|min:0.01',
-            'currency' => 'required|exists:currencies,code',
+            'currency' => 'required|string|size:3',
         ];
     }
 

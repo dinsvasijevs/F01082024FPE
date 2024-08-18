@@ -109,7 +109,7 @@ class CryptocurrencyController extends Controller
         $response = Http::withHeaders([
             'X-CMC_PRO_API_KEY' => config('services.coinmarketcap.api_key')
         ])->get('https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest', [
-            'limit' => 10,
+            'limit' => 20,
             'convert' => 'USD'
         ]);
 
