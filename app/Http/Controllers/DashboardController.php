@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use App\Models\Account;
 use App\Models\Transaction;
 use App\Models\Currency;
+use App\Models\CryptoTransaction;
 
 class DashboardController extends Controller
 {
@@ -22,8 +23,14 @@ class DashboardController extends Controller
             ->take(10)
             ->get();
 
-        $currencies = Currency::all();  // Add this line
+        $currencies = Currency::all();
 
-        return view('dashboard', compact('user', 'account', 'transactions', 'currencies'));
+        $cryptoTransactions = CryptoTransaction::where('from_account_id', $account->id)
+            ->orWhere('to_account_id', $account->id)
+            ->latest()
+            ->take(10)
+            ->get();
+
+        return view('dashboard', compact('user', 'account', 'transactions', 'currencies', 'cryptoTransactions'));
     }
 }

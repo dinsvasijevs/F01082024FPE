@@ -4,6 +4,8 @@ namespace App\Services;
 
 use App\Models\User;
 use App\Models\Investment;
+use App\Models\CryptoTransaction;
+use App\Models\Account;
 use Illuminate\Support\Facades\DB;
 
 class CryptoService
@@ -20,9 +22,6 @@ class CryptoService
 
             $cryptoPrice = $this->getCryptoPrice($symbol);
             $totalCost = $amount * $cryptoPrice;
-
-            \Log::info("User account balance: " . $account->balance);
-            \Log::info("Total cost: " . $totalCost);
 
             if ($account->balance < $totalCost) {
                 throw new \Exception("Insufficient balance. You need $" . $totalCost . ", but you only have $" . $account->balance);
@@ -43,8 +42,7 @@ class CryptoService
 
             $investment->save();
 
-            // Record the transaction
-            $this->recordTransaction($userId, $symbol, $amount, $cryptoPrice, 'buy');
+            $this->recordTransaction($account->id, $account->id, $symbol, $amount, $cryptoPrice, 'buy');
 
             return $investment;
         });
@@ -81,10 +79,35 @@ class CryptoService
                 $investment->delete();
             }
 
-            // Record the transaction
-            $this->recordTransaction($userId, $symbol, $amount, $cryptoPrice, 'sell');
+            $this->recordTransaction($account->id, $account->id, $symbol, $amount, $cryptoPrice, 'sell');
 
             return $investment;
+        });
+    }
+
+    public function transferCrypto($fromAccountId, $toAccountId, $symbol, $amount)
+    {
+        return DB::transaction(function () use ($fromAccountId, $toAccountId, $symbol, $amount) {
+            $fromAccount = Account::findOrFail($fromAccountId);
+            $toAccount = Account::findOrFail($toAccountId);
+
+            $fromInvestment = $fromAccount->user->investments()->where('symbol', $symbol)->firstOrFail();
+
+            if ($fromInvestment->amount < $amount) {
+                throw new \Exception('Insufficient cryptocurrency balance');
+            }
+
+            $fromInvestment->amount -= $amount;
+            $fromInvestment->save();
+
+            $toInvestment = $toAccount->user->investments()->firstOrNew(['symbol' => $symbol]);
+            $toInvestment->amount = ($toInvestment->amount ?? 0) + $amount;
+            $toInvestment->save();
+
+            $cryptoPrice = $this->getCryptoPrice($symbol);
+            $this->recordTransaction($fromAccountId, $toAccountId, $symbol, $amount, $cryptoPrice, 'transfer');
+
+            return $toInvestment;
         });
     }
 
@@ -109,17 +132,15 @@ class CryptoService
         return $cacheData->expiration > time();
     }
 
-    public function recordTransaction($userId, $symbol, $amount, $price, $type): void
+    public function recordTransaction($fromAccountId, $toAccountId, $symbol, $amount, $price, $type): void
     {
-        DB::table('crypto_transactions')->insert([
-            'account_id' => $userId,
+        CryptoTransaction::create([
+            'from_account_id' => $fromAccountId,
+            'to_account_id' => $toAccountId,
             'symbol' => $symbol,
             'amount' => $amount,
             'price' => $price,
-            'currency' => 'USD',
             'type' => $type,
-            'created_at' => now(),
-            'updated_at' => now(),
         ]);
     }
 }

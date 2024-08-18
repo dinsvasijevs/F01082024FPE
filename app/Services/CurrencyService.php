@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Cache;
 
 class CurrencyService
 {
-    protected $apiKey;
+    protected mixed $apiKey;
 
     public function __construct()
     {

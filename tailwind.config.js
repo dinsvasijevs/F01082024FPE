@@ -11,11 +11,16 @@ export default {
 
     theme: {
         extend: {
-            fontFamily: {
-                sans: ['Figtree', ...defaultTheme.fontFamily.sans],
+            colors: {
+                'blue': {
+                    900: '#003366',
+                },
+                fontFamily: {
+                    sans: ['Figtree', ...defaultTheme.fontFamily.sans],
+                },
             },
         },
-    },
 
-    plugins: [forms],
+        plugins: [forms],
+    }
 };
