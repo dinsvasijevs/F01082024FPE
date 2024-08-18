@@ -16,17 +16,3 @@ The application replicates a digital banking platform with built-in cryptocurren
 1. **Clone the Repository:**
    ```bash
    git clone https://github.com/your-repo/dinsvasijevs/F01082024FPE.git
-
-
-
-
-
-
-
-
-
-
-
-
-
-
