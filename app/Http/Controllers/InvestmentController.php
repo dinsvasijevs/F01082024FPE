@@ -27,7 +27,7 @@ class InvestmentController extends Controller
         $investments = $user->investments()->get();
 
         foreach ($investments as $investment) {
-            $currentPrice = $this->cryptoService->getCurrentPrice($investment->symbol);
+            $currentPrice = $this->cryptoService->getCryptoPrice($investment->symbol);
             $investment->current_price = $currentPrice;
             $investment->current_value = $investment->amount * $currentPrice;
             $investment->profit_loss = $investment->current_value - ($investment->amount * $investment->average_buy_price);

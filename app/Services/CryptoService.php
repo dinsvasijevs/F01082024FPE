@@ -43,6 +43,9 @@ class CryptoService
 
             $investment->save();
 
+            // Record the transaction
+            $this->recordTransaction($userId, $symbol, $amount, $cryptoPrice, 'buy');
+
             return $investment;
         });
     }
@@ -78,6 +81,9 @@ class CryptoService
                 $investment->delete();
             }
 
+            // Record the transaction
+            $this->recordTransaction($userId, $symbol, $amount, $cryptoPrice, 'sell');
+
             return $investment;
         });
     }
@@ -101,5 +107,19 @@ class CryptoService
     private function isCacheValid($cacheData): bool
     {
         return $cacheData->expiration > time();
+    }
+
+    public function recordTransaction($userId, $symbol, $amount, $price, $type): void
+    {
+        DB::table('crypto_transactions')->insert([
+            'account_id' => $userId,
+            'symbol' => $symbol,
+            'amount' => $amount,
+            'price' => $price,
+            'currency' => 'USD',
+            'type' => $type,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
     }
 }
