@@ -30,56 +30,75 @@ To get a local copy up and running, follow these simple steps.
    ```sh
    git clone https://github.com/your_username/silver-bank.git
 
-   Install PHP dependencies
-shCopycomposer install
+## Installation
 
-Install NPM packages
-shCopynpm install
+To set up the project locally, follow these steps:
 
-Create a copy of the .env.example file and rename it to .env
-shCopycp .env.example .env
+1. **Install PHP dependencies:**
+    ```sh
+    composer install
+    ```
 
-Generate an application key
-shCopyphp artisan key:generate
+2. **Install NPM packages:**
+    ```sh
+    npm install
+    ```
 
-Configure your database in the .env file
-Run database migrations
-shCopyphp artisan migrate
+3. **Create a copy of the `.env.example` file and rename it to `.env`:**
+    ```sh
+    cp .env.example .env
+    ```
 
-Compile assets
-shCopynpm run dev
+4. **Generate an application key:**
+    ```sh
+    php artisan key:generate
+    ```
 
-Start the development server
-shCopyphp artisan serve
+5. **Configure your database in the `.env` file:**
 
+    ```ini
+    DB_CONNECTION=mysql
+    DB_HOST=127.0.0.1
+    DB_PORT=3306
+    DB_DATABASE=database.sqlite
+    DB_USERNAME=root
+    DB_PASSWORD=
+    ```
 
-Visit http://localhost:8000 in your browser to see the application.
-Usage
+6. **Run database migrations:**
+    ```sh
+    php artisan migrate
+    ```
 
-Register for a new account or log in if you already have one.
-Explore the dashboard to view your account summary and recent transactions.
-Use the "Transfer Money" feature to send funds to other accounts.
-Switch between currencies using the "Switch Currency" option.
-Navigate to the "Cryptocurrencies" page to buy or sell digital assets.
-Check your "Investments" page to track and manage your portfolio.
+7. **Seed the database with initial data (if available):**
+    ```sh
+    php artisan db:seed
+    ```
 
-Contributing
-Contributions are what make the open-source community such an amazing place to learn, inspire, and create. Any contributions you make are greatly appreciated.
+8. **Compile assets:**
+    ```sh
+    npm run dev
+    ```
 
-Fork the Project
-Create your Feature Branch (git checkout -b feature/AmazingFeature)
-Commit your Changes (git commit -m 'Add some AmazingFeature')
-Push to the Branch (git push origin feature/AmazingFeature)
-Open a Pull Request
+9. **Start the development server:**
+    ```sh
+    php artisan serve
+    ```
 
-License
-Distributed under the MIT License. See LICENSE for more information.
-Contact
-Your Name - @your_twitter - email@example.com
-Project Link: https://github.com/your_username/silver-bank
-Acknowledgements
+You can now visit [http://localhost:8000](http://localhost:8000) in your browser to see the application.
 
-Laravel
-Tailwind CSS
-Alpine.js
+## Usage
 
+- Register for a new account or log in if you already have one.
+- Explore the dashboard to view your account summary and recent transactions.
+- Use the "Transfer Money" feature to send funds to other accounts.
+- Switch between currencies using the "Switch Currency" option.
+- Navigate to the "Cryptocurrencies" page to buy or sell digital assets.
+- Check your "Investments" page to track and manage your portfolio.
+
+## Running Tests
+
+To run the automated tests for this system:
+
+```sh
+php artisan test
