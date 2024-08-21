@@ -19,10 +19,10 @@ To get a local copy up and running, follow these simple steps.
 
 ### Prerequisites
 
-- PHP >= 8.1
-- Composer
+- PHP >= 8.3
+- Composer 2.7.8.
 - Node.js and npm
-- MySQL or PostgreSQL
+- Sqlite 
 
 ### Installation
 
