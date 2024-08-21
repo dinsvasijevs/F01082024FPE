@@ -57,7 +57,7 @@ To set up the project locally, follow these steps:
 5. **Configure your database in the `.env` file:**
 
     ```ini
-    DB_CONNECTION=mysql
+    DB_CONNECTION=sqlite
     DB_HOST=127.0.0.1
     DB_PORT=3306
     DB_DATABASE=database.sqlite
